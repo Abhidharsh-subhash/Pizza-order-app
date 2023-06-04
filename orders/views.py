@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from .import serializers
 from . models import Order
-from rest_framework.permissions import IsAuthenticated
+#this is used for restricting permissions to some of teh authorities by specifying it in the class
+from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly,IsAdminUser
 from django.contrib.auth import get_user_model
 
 User=get_user_model()
@@ -18,7 +19,7 @@ class HelloOrderview(GenericAPIView):
 class OrderCreateListView(GenericAPIView):
     serializer_class=serializers.OrderCreationSerializer
     queryset=Order.objects.all()
-    permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticatedOrReadOnly]
     def get(self,request):
         orders=Order.objects.all()
         serialzer=self.serializer_class(instance=orders,many=True)
@@ -36,7 +37,7 @@ class OrderCreateListView(GenericAPIView):
 #this method is to get,update and delete sepcific order
 class OrderDetailView(GenericAPIView):
     serializer_class=serializers.OrderDetailSerializer
-    permission_classes=[IsAuthenticated]
+    permission_classes=[IsAdminUser]
     def get(self,request,order_id):
         order=get_object_or_404(Order,pk=order_id)
         serializer=self.serializer_class(instance=order)
@@ -58,6 +59,8 @@ class OrderDetailView(GenericAPIView):
     
 class UpdateOrderStatus(GenericAPIView):
     serializer_class=serializers.orderStatusUpdateSerializer
+    #this is being given to restrict the permission of using this api for only users
+    permission_classes=[IsAdminUser]
     def put(self,request,order_id):
         order=get_object_or_404(Order,pk=order_id)
         data=request.data
