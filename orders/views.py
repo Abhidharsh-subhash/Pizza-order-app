@@ -42,7 +42,7 @@ class OrderCreateListView(GenericAPIView):
 #this method is to get,update and delete sepcific order
 class OrderDetailView(GenericAPIView):
     serializer_class=serializers.OrderDetailSerializer
-    permission_classes=[IsAdminUser]
+    permission_classes=[IsAuthenticated]
     @swagger_auto_schema(operation_summary='Retrieve an order by id.')
     def get(self,request,order_id):
         order=get_object_or_404(Order,pk=order_id)
@@ -68,7 +68,7 @@ class OrderDetailView(GenericAPIView):
 class UpdateOrderStatus(GenericAPIView):
     serializer_class=serializers.orderStatusUpdateSerializer
     #this is being given to restrict the permission of using this api for only users
-    permission_classes=[IsAdminUser]
+    permission_classes=[IsAuthenticated]
     @swagger_auto_schema(operation_summary='Update an order status.')
     def put(self,request,order_id):
         order=get_object_or_404(Order,pk=order_id)
